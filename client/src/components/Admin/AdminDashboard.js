@@ -479,6 +479,26 @@ function AdminDashboard({ userId, isAdmin }) {
                   </button>
                   <button 
                     type="button"
+                    onClick={() => {
+                      console.log('Test button clicked');
+                      console.log('Form data:', menuForm);
+                      console.log('Categories:', categories);
+                      alert('Test button works! Check console for form data.');
+                    }}
+                    style={{
+                      padding: '0.75rem 1rem',
+                      backgroundColor: '#2196f3',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    🔍 Test
+                  </button>
+                  <button 
+                    type="button"
                     onClick={() => setShowMenuForm(false)}
                     style={{
                       padding: '0.75rem 2rem',
