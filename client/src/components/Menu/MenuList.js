@@ -166,60 +166,18 @@ function MenuList({ onAddToCart, userId, isAuthenticated }) {
         </div>
       </div>
       
-      <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-        {showForm ? 'Cancel' : editingItem ? 'Edit Menu Item' : 'Add Menu Item'}
-      </button>
-      
-      {showForm && (
-        <div className="form-container">
-          <h3>{editingItem ? 'Edit Menu Item' : 'Add New Menu Item'}</h3>
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="Item Name"
-              value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
-              required
-            />
-            <textarea
-              placeholder="Description"
-              value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
-              rows="3"
-            />
-            <input
-              type="number"
-              step="0.01"
-              placeholder="Price ($)"
-              value={formData.price}
-              onChange={(e) => setFormData({...formData, price: e.target.value})}
-              required
-            />
-            <input
-              type="url"
-              placeholder="Image URL (optional)"
-              value={formData.image_url}
-              onChange={(e) => setFormData({...formData, image_url: e.target.value})}
-            />
-            <select
-              value={formData.category_id}
-              onChange={(e) => setFormData({...formData, category_id: e.target.value})}
-              required
-            >
-              <option value="">Select Category</option>
-              {categories.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
-              ))}
-            </select>
-            <div style={{display: 'flex', gap: '1rem'}}>
-              <button type="submit" className="btn btn-primary">
-                {editingItem ? 'Update Item' : 'Create Item'}
-              </button>
-              <button type="button" className="btn btn-secondary" onClick={resetForm}>
-                Cancel
-              </button>
-            </div>
-          </form>
+      {!isAuthenticated && (
+        <div style={{ 
+          backgroundColor: '#e8f5e9', 
+          padding: '1rem', 
+          borderRadius: '8px', 
+          marginBottom: '2rem',
+          textAlign: 'center',
+          border: '2px solid #4caf50'
+        }}>
+          <p style={{ margin: '0 0 1rem 0', color: '#2e7d32' }}>
+            🍽️ Browse our delicious menu! <a href="/register" style={{ color: '#4caf50', fontWeight: 'bold' }}>Register</a> or <a href="/login" style={{ color: '#4caf50', fontWeight: 'bold' }}>Login</a> to order.
+          </p>
         </div>
       )}
       
