@@ -37,7 +37,7 @@ db.init_app(app)
 api = Api(app)
 
 # Instantiate CORS
-CORS(app, origins=['http://localhost:3000'], supports_credentials=True)
+CORS(app, origins=['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:3003'], supports_credentials=True)
 
 # Instantiate JWT
 # jwt = JWTManager(app)
