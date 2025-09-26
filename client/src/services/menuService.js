@@ -1,8 +1,8 @@
 const BACKEND_URL = 'http://localhost:5555';
-const API_BASE_URL = `${BACKEND_URL}/api/menu/`;
+const API_BASE_URL = `${BACKEND_URL}/api/menu`;
 
 export const getMenuItems = async () => {
-  const response = await fetch(API_BASE_URL);
+  const response = await fetch(`${API_BASE_URL}/`);
   if (!response.ok) {
     throw new Error('Failed to fetch menu items');
   }
@@ -10,7 +10,7 @@ export const getMenuItems = async () => {
 };
 
 export const createMenuItem = async (menuItemData) => {
-  const response = await fetch(API_BASE_URL, {
+  const response = await fetch(`${API_BASE_URL}/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
