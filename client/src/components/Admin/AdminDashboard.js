@@ -112,15 +112,12 @@ function AdminDashboard({ userId, isAdmin }) {
         name: menuForm.name.trim(),
         description: menuForm.description.trim(),
         price: parseFloat(menuForm.price),
-        category_id: parseInt(menuForm.category_id)
+        category_id: parseInt(menuForm.category_id),
+        image_url: menuForm.image_url ? menuForm.image_url.trim() : null
       };
       
-      // Only add image_url if it's provided
-      if (menuForm.image_url && menuForm.image_url.trim()) {
-        payload.image_url = menuForm.image_url.trim();
-      }
-      
-      console.log('Creating menu item:', payload);
+      console.log(`${editingItem ? 'Updating' : 'Creating'} menu item:`, payload);
+      console.log('URL:', url, 'Method:', method);
       
       const response = await fetch(url, {
         method,
@@ -130,29 +127,30 @@ function AdminDashboard({ userId, isAdmin }) {
       
       if (response.ok) {
         const result = await response.json();
-        console.log('Menu item created:', result);
+        console.log('Success:', result);
         
         // Reset form and close
         setShowMenuForm(false);
         setEditingItem(null);
         setMenuForm({ name: '', description: '', price: '', category_id: '', image_url: '' });
         
-        // Reload menu items
+        // Reload menu items to show changes
         await loadMenuItems();
         
-        alert(editingItem ? 'Menu item updated!' : 'New menu item created!');
+        alert(editingItem ? '✅ Menu item updated successfully!' : '✅ New menu item created!');
       } else {
         const errorText = await response.text();
         console.error('Server error:', response.status, errorText);
-        alert(`Failed to save: ${response.status} - ${errorText}`);
+        alert(`❌ Failed to save: ${response.status} - ${errorText}`);
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Network error. Check console.');
+      console.error('Network error:', error);
+      alert('❌ Network error. Check console and server.');
     }
   };
 
   const editMenuItem = (item) => {
+    console.log('Editing item:', item);
     setEditingItem(item);
     setMenuForm({
       name: item.name,
@@ -168,8 +166,12 @@ function AdminDashboard({ userId, isAdmin }) {
       const formElement = document.getElementById('menu-form');
       if (formElement) {
         formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        formElement.style.backgroundColor = '#e3f2fd';
+        setTimeout(() => {
+          formElement.style.backgroundColor = editingItem ? '#f0f8ff' : 'white';
+        }, 1000);
       }
-    }, 100);
+    }, 200);
   };
 
   const addNewMenuItem = () => {
@@ -603,7 +605,10 @@ function AdminDashboard({ userId, isAdmin }) {
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <button 
-                    onClick={() => editMenuItem(item)}
+                    onClick={() => {
+                      console.log('Edit button clicked for item:', item);
+                      editMenuItem(item);
+                    }}
                     style={{
                       padding: '0.5rem 1rem',
                       backgroundColor: '#4caf50',
