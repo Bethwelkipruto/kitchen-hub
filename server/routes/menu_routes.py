@@ -27,14 +27,16 @@ def update_menu_item(id):
     item = MenuItem.query.get_or_404(id)
     data = request.get_json()
     
-    item.name = data['name']
-    item.description = data['description']
-    item.price = data['price']
-    item.category_id = data['category_id']
-    item.image_url = data.get('image_url')
+    item.name = data.get('name', item.name)
+    item.description = data.get('description', item.description)
+    item.price = data.get('price', item.price)
+    item.category_id = data.get('category_id', item.category_id)
+    item.image_url = data.get('image_url', item.image_url)
+    if 'available' in data:
+        item.available = data['available']
     
     db.session.commit()
-    return jsonify({'id': item.id, 'name': item.name})
+    return jsonify(item.to_dict())
 
 @menu_bp.route('/<int:id>', methods=['DELETE'])
 def delete_menu_item(id):
