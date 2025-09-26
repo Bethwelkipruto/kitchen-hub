@@ -22,7 +22,7 @@ if database_url.startswith('postgres://'):
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'your-secret-key-change-in-production'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
 app.json.compact = False
 
 # Define metadata, instantiate db
@@ -37,7 +37,20 @@ db.init_app(app)
 api = Api(app)
 
 # Instantiate CORS
-CORS(app, origins=['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:3003'], supports_credentials=True)
+allowed_origins = [
+    os.environ.get('FRONTEND_URL', 'http://localhost:3000'),
+    'http://localhost:3000',
+    'http://localhost:3001', 
+    'http://localhost:3002',
+    'http://localhost:3003'
+]
+
+CORS(app, 
+     origins=allowed_origins,
+     supports_credentials=True,
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+     allow_headers=['Content-Type', 'Authorization']
+)
 
 # Instantiate JWT
 # jwt = JWTManager(app)

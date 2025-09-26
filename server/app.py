@@ -23,6 +23,25 @@ app.register_blueprint(auth_bp)
 def index():
     return '<h1>Quick Bite API</h1>'
 
+@app.after_request
+def after_request(response):
+    origin = request.headers.get('Origin')
+    allowed_origins = [
+        os.environ.get('FRONTEND_URL', 'http://localhost:3000'),
+        'http://localhost:3000',
+        'http://localhost:3001', 
+        'http://localhost:3002',
+        'http://localhost:3003'
+    ]
+    
+    if origin in allowed_origins:
+        response.headers.add('Access-Control-Allow-Origin', origin)
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+    
+    return response
+
 @app.route('/init-db')
 def init_db():
     try:
@@ -197,5 +216,8 @@ def seed_db():
         return f'Seed Error: {str(e)}'
 
 if __name__ == '__main__':
-    app.run(port=5555, debug=True)
+    import os
+    port = int(os.environ.get('PORT', 5555))
+    debug = os.environ.get('FLASK_ENV') != 'production'
+    app.run(host='0.0.0.0', port=port, debug=debug)
 

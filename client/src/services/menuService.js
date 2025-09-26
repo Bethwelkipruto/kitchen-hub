@@ -1,4 +1,4 @@
-const BACKEND_URL = 'http://localhost:5555';
+const BACKEND_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5555';
 const API_BASE_URL = `${BACKEND_URL}/api/menu`;
 
 export const getMenuItems = async () => {
