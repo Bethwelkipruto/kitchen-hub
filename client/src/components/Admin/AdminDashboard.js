@@ -15,6 +15,7 @@ function AdminDashboard({ userId, isAdmin }) {
   const [showCategoryForm, setShowCategoryForm] = useState(false);
   const [categoryForm, setCategoryForm] = useState({ name: '', description: '' });
   const [editingCategory, setEditingCategory] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   useEffect(() => {
     if (isAdmin) {
@@ -23,6 +24,15 @@ function AdminDashboard({ userId, isAdmin }) {
       loadUsers();
       loadMenuItems();
       loadCategories();
+      
+      // Auto-refresh every 30 seconds
+      const interval = setInterval(() => {
+        loadDashboard();
+        loadOrders();
+        loadUsers();
+      }, 30000);
+      
+      return () => clearInterval(interval);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
@@ -32,6 +42,7 @@ function AdminDashboard({ userId, isAdmin }) {
       const response = await fetch(`${API_BASE_URL}/api/admin/dashboard?user_id=${userId}`);
       const data = await response.json();
       setStats(data);
+      setLastUpdated(new Date());
     } catch (error) {
       console.error('Error loading dashboard:', error);
     }
@@ -282,7 +293,28 @@ function AdminDashboard({ userId, isAdmin }) {
 
   return (
     <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1 style={{ color: '#2e7d32', marginBottom: '2rem', textAlign: 'center' }}>🏪 Kitchen Hub Admin Panel</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <h1 style={{ color: '#2e7d32', margin: 0 }}>Kitchen Hub Admin Panel</h1>
+        <button 
+          onClick={() => {
+            loadDashboard();
+            loadOrders();
+            loadUsers();
+            alert('Data refreshed!');
+          }}
+          style={{
+            padding: '0.75rem 1.5rem',
+            backgroundColor: '#2196f3',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontWeight: 'bold'
+          }}
+        >
+          Refresh Data
+        </button>
+      </div>
       
       <div style={{ marginBottom: '2rem', borderBottom: '2px solid #4caf50' }}>
         <button style={tabStyle('dashboard')} onClick={() => setActiveTab('dashboard')}>📊 Dashboard</button>
@@ -294,7 +326,14 @@ function AdminDashboard({ userId, isAdmin }) {
 
       {activeTab === 'dashboard' && (
         <div>
-          <h2 style={{ color: '#2e7d32', borderBottom: '2px solid #4caf50', paddingBottom: '0.5rem' }}>📈 Business Overview</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2 style={{ color: '#2e7d32', borderBottom: '2px solid #4caf50', paddingBottom: '0.5rem', margin: 0 }}>Business Overview</h2>
+            {lastUpdated && (
+              <small style={{ color: '#666' }}>
+                Last updated: {lastUpdated.toLocaleTimeString()}
+              </small>
+            )}
+          </div>
           {stats && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
               <div style={{ padding: '1.5rem', backgroundColor: 'white', borderRadius: '10px', border: '2px solid #4caf50', boxShadow: '0 4px 8px rgba(76, 175, 80, 0.1)' }}>
