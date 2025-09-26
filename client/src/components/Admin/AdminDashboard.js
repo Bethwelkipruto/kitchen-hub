@@ -14,6 +14,7 @@ function AdminDashboard({ userId, isAdmin }) {
   const [menuForm, setMenuForm] = useState({ name: '', description: '', price: '', category_id: '', image_url: '' });
   const [showCategoryForm, setShowCategoryForm] = useState(false);
   const [categoryForm, setCategoryForm] = useState({ name: '', description: '' });
+  const [editingCategory, setEditingCategory] = useState(null);
 
   useEffect(() => {
     if (isAdmin) {
@@ -206,8 +207,13 @@ function AdminDashboard({ userId, isAdmin }) {
   const handleCategorySubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${API_BASE_URL}/api/categories/`, {
-        method: 'POST',
+      const url = editingCategory 
+        ? `${API_BASE_URL}/api/categories/${editingCategory.id}`
+        : `${API_BASE_URL}/api/categories/`;
+      const method = editingCategory ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(categoryForm)
       });
@@ -215,14 +221,46 @@ function AdminDashboard({ userId, isAdmin }) {
       if (response.ok) {
         setShowCategoryForm(false);
         setCategoryForm({ name: '', description: '' });
+        setEditingCategory(null);
         loadCategories();
-        alert('Category created successfully!');
+        alert(editingCategory ? 'Category updated successfully!' : 'Category created successfully!');
       } else {
-        alert('Failed to create category');
+        alert(editingCategory ? 'Failed to update category' : 'Failed to create category');
       }
     } catch (error) {
-      console.error('Error creating category:', error);
-      alert('Error creating category');
+      console.error('Error saving category:', error);
+      alert('Error saving category');
+    }
+  };
+
+  const editCategory = (category) => {
+    setEditingCategory(category);
+    setCategoryForm({
+      name: category.name,
+      description: category.description || ''
+    });
+    setShowCategoryForm(true);
+  };
+
+  const deleteCategory = async (categoryId) => {
+    if (!window.confirm('Are you sure you want to delete this category?')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/categories/${categoryId}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        loadCategories();
+        alert('Category deleted successfully!');
+      } else {
+        alert('Failed to delete category');
+      }
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      alert('Error deleting category');
     }
   };
 
@@ -742,11 +780,15 @@ function AdminDashboard({ userId, isAdmin }) {
                       fontWeight: 'bold'
                     }}
                   >
-                    ➕ Create Category
+                    {editingCategory ? 'Update Category' : 'Create Category'}
                   </button>
                   <button 
                     type="button"
-                    onClick={() => setShowCategoryForm(false)}
+                    onClick={() => {
+                      setShowCategoryForm(false);
+                      setEditingCategory(null);
+                      setCategoryForm({ name: '', description: '' });
+                    }}
                     style={{
                       padding: '0.75rem 2rem',
                       backgroundColor: '#f44336',
@@ -775,9 +817,39 @@ function AdminDashboard({ userId, isAdmin }) {
               }}>
                 <h4 style={{ margin: '0 0 0.5rem 0', color: '#2e7d32' }}>{category.name}</h4>
                 <p style={{ margin: '0 0 1rem 0', color: '#666', fontSize: '0.9rem' }}>{category.description}</p>
-                <p style={{ margin: 0, fontSize: '0.8rem', color: '#4caf50', fontWeight: 'bold' }}>
-                  🍽️ {menuItems.filter(item => item.category_id === category.id).length} items
+                <p style={{ margin: '0 0 1rem 0', fontSize: '0.8rem', color: '#4caf50', fontWeight: 'bold' }}>
+                  {menuItems.filter(item => item.category_id === category.id).length} items
                 </p>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button 
+                    onClick={() => editCategory(category)}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      backgroundColor: '#1976d2',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem'
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    onClick={() => deleteCategory(category.id)}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      backgroundColor: '#f44336',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem'
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </div>
