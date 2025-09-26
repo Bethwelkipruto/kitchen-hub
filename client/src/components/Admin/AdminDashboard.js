@@ -132,6 +132,19 @@ function AdminDashboard({ userId, isAdmin }) {
     setShowMenuForm(true);
   };
 
+  const toggleMenuItemAvailability = async (itemId, available) => {
+    try {
+      await fetch(`${API_BASE_URL}/api/admin/menu-items/${itemId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, available: !available })
+      });
+      loadMenuItems();
+    } catch (error) {
+      console.error('Error updating menu item:', error);
+    }
+  };
+
   if (!isAdmin) {
     return <div style={{ padding: '2rem', textAlign: 'center' }}>Access denied. Admin privileges required.</div>;
   }
