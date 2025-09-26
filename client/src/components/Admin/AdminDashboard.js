@@ -9,6 +9,9 @@ function AdminDashboard({ userId, isAdmin }) {
   const [users, setUsers] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [showMenuForm, setShowMenuForm] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
+  const [menuForm, setMenuForm] = useState({ name: '', description: '', price: '', category_id: '', image_url: '' });
 
   useEffect(() => {
     if (isAdmin) {
@@ -86,6 +89,47 @@ function AdminDashboard({ userId, isAdmin }) {
     } catch (error) {
       console.error('Error updating order status:', error);
     }
+  };
+
+  const handleMenuSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const url = editingItem 
+        ? `${API_BASE_URL}/api/admin/menu-items/${editingItem.id}`
+        : `${API_BASE_URL}/api/admin/menu-items`;
+      const method = editingItem ? 'PATCH' : 'POST';
+      
+      await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...menuForm, user_id: userId, price: parseFloat(menuForm.price) })
+      });
+      
+      setShowMenuForm(false);
+      setEditingItem(null);
+      setMenuForm({ name: '', description: '', price: '', category_id: '', image_url: '' });
+      loadMenuItems();
+    } catch (error) {
+      console.error('Error saving menu item:', error);
+    }
+  };
+
+  const editMenuItem = (item) => {
+    setEditingItem(item);
+    setMenuForm({
+      name: item.name,
+      description: item.description,
+      price: item.price.toString(),
+      category_id: item.category_id.toString(),
+      image_url: item.image_url || ''
+    });
+    setShowMenuForm(true);
+  };
+
+  const addNewMenuItem = () => {
+    setEditingItem(null);
+    setMenuForm({ name: '', description: '', price: '', category_id: '', image_url: '' });
+    setShowMenuForm(true);
   };
 
   if (!isAdmin) {
@@ -199,7 +243,118 @@ function AdminDashboard({ userId, isAdmin }) {
 
       {activeTab === 'menu' && (
         <div>
-          <h2 style={{ color: '#2e7d32', borderBottom: '2px solid #4caf50', paddingBottom: '0.5rem' }}>🍽️ Menu Management</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2 style={{ color: '#2e7d32', borderBottom: '2px solid #4caf50', paddingBottom: '0.5rem' }}>🍽️ Menu Management</h2>
+            <button 
+              onClick={addNewMenuItem}
+              style={{
+                padding: '0.75rem 1.5rem',
+                backgroundColor: '#4caf50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                fontWeight: 'bold'
+              }}
+            >
+              ➕ Add New Item
+            </button>
+          </div>
+
+          {showMenuForm && (
+            <div style={{ 
+              backgroundColor: 'white', 
+              padding: '2rem', 
+              borderRadius: '10px', 
+              boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+              marginBottom: '2rem',
+              border: '2px solid #4caf50'
+            }}>
+              <h3 style={{ color: '#2e7d32', marginBottom: '1rem' }}>
+                {editingItem ? '✏️ Edit Menu Item' : '➕ Add New Menu Item'}
+              </h3>
+              <form onSubmit={handleMenuSubmit}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                  <input
+                    type="text"
+                    placeholder="Item Name"
+                    value={menuForm.name}
+                    onChange={(e) => setMenuForm({...menuForm, name: e.target.value})}
+                    style={{ padding: '0.75rem', border: '2px solid #e8f5e9', borderRadius: '5px' }}
+                    required
+                  />
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder="Price"
+                    value={menuForm.price}
+                    onChange={(e) => setMenuForm({...menuForm, price: e.target.value})}
+                    style={{ padding: '0.75rem', border: '2px solid #e8f5e9', borderRadius: '5px' }}
+                    required
+                  />
+                </div>
+                <textarea
+                  placeholder="Description"
+                  value={menuForm.description}
+                  onChange={(e) => setMenuForm({...menuForm, description: e.target.value})}
+                  style={{ width: '100%', padding: '0.75rem', border: '2px solid #e8f5e9', borderRadius: '5px', marginBottom: '1rem', minHeight: '80px' }}
+                  required
+                />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                  <select
+                    value={menuForm.category_id}
+                    onChange={(e) => setMenuForm({...menuForm, category_id: e.target.value})}
+                    style={{ padding: '0.75rem', border: '2px solid #e8f5e9', borderRadius: '5px' }}
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="url"
+                    placeholder="Image URL (optional)"
+                    value={menuForm.image_url}
+                    onChange={(e) => setMenuForm({...menuForm, image_url: e.target.value})}
+                    style={{ padding: '0.75rem', border: '2px solid #e8f5e9', borderRadius: '5px' }}
+                  />
+                </div>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <button 
+                    type="submit"
+                    style={{
+                      padding: '0.75rem 2rem',
+                      backgroundColor: '#4caf50',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {editingItem ? '💾 Update Item' : '➕ Create Item'}
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => setShowMenuForm(false)}
+                    style={{
+                      padding: '0.75rem 2rem',
+                      backgroundColor: '#f44336',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    ❌ Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
             {menuItems.map(item => (
               <div key={item.id} style={{ 
@@ -207,20 +362,52 @@ function AdminDashboard({ userId, isAdmin }) {
                 padding: '1rem', 
                 borderRadius: '10px', 
                 boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                border: item.available ? '2px solid #28a745' : '2px solid #dc3545'
+                border: item.available ? '2px solid #4caf50' : '2px solid #f44336'
               }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: '#333' }}>{item.name}</h4>
+                <h4 style={{ margin: '0 0 0.5rem 0', color: '#2e7d32' }}>{item.name}</h4>
                 <p style={{ margin: '0 0 0.5rem 0', color: '#666', fontSize: '0.9rem' }}>{item.description}</p>
-                <p style={{ margin: '0 0 1rem 0', fontWeight: 'bold', fontSize: '1.2rem', color: '#007bff' }}>${item.price}</p>
-                <span style={{ 
-                  padding: '0.25rem 0.5rem', 
-                  borderRadius: '15px',
-                  fontSize: '0.8rem',
-                  backgroundColor: item.available ? '#d4edda' : '#f8d7da',
-                  color: item.available ? '#155724' : '#721c24'
-                }}>
-                  {item.available ? '✅ Available' : '❌ Unavailable'}
-                </span>
+                <p style={{ margin: '0 0 1rem 0', fontWeight: 'bold', fontSize: '1.2rem', color: '#4caf50' }}>${item.price}</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <span style={{ 
+                    padding: '0.25rem 0.5rem', 
+                    borderRadius: '15px',
+                    fontSize: '0.8rem',
+                    backgroundColor: item.available ? '#e8f5e9' : '#ffebee',
+                    color: item.available ? '#2e7d32' : '#c62828'
+                  }}>
+                    {item.available ? '✅ Available' : '❌ Unavailable'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button 
+                    onClick={() => editMenuItem(item)}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      backgroundColor: '#4caf50',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem'
+                    }}
+                  >
+                    ✏️ Edit
+                  </button>
+                  <button 
+                    onClick={() => toggleMenuItemAvailability(item.id, item.available)}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      backgroundColor: item.available ? '#f44336' : '#4caf50',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem'
+                    }}
+                  >
+                    {item.available ? '🚫 Disable' : '✅ Enable'}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
