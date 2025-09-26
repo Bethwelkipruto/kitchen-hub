@@ -1,9 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5555';
+
 function Navbar() {
   const { user, logout, isAuthenticated, isAdmin } = useAuth();
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    if (isAuthenticated && user && !isAdmin) {
+      loadCartCount();
+    }
+  }, [isAuthenticated, user, isAdmin]);
+
+  const loadCartCount = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/orders/cart/${user.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        const totalItems = data.items ? data.items.reduce((sum, item) => sum + item.quantity, 0) : 0;
+        setCartCount(totalItems);
+      }
+    } catch (error) {
+      console.error('Error loading cart count:', error);
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -19,8 +41,31 @@ function Navbar() {
           <Link to="/menu">Menu</Link>
           {isAuthenticated && (
             <>
-              <Link to="/cart">Cart</Link>
-              <Link to="/orders">My Orders</Link>
+              {!isAdmin && (
+                <Link to="/cart" style={{ position: 'relative', display: 'inline-block' }}>
+                  🛒 Cart
+                  {cartCount > 0 && (
+                    <span style={{
+                      position: 'absolute',
+                      top: '-8px',
+                      right: '-8px',
+                      backgroundColor: '#4caf50',
+                      color: 'white',
+                      borderRadius: '50%',
+                      width: '20px',
+                      height: '20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.8rem',
+                      fontWeight: 'bold'
+                    }}>
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+              )}
+              {!isAdmin && <Link to="/orders">My Orders</Link>}
               {(isAdmin || user?.username === 'admin') && (
                 <Link to="/admin">Admin Dashboard</Link>
               )}
