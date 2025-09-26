@@ -34,9 +34,10 @@ function AdminDashboard({ userId, isAdmin }) {
     try {
       const response = await fetch(`${API_BASE_URL}/api/orders/`);
       const data = await response.json();
-      setOrders(data);
+      setOrders(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading orders:', error);
+      setOrders([]);
     }
   };
 
@@ -44,9 +45,10 @@ function AdminDashboard({ userId, isAdmin }) {
     try {
       const response = await fetch(`${API_BASE_URL}/api/admin/users?user_id=${userId}`);
       const data = await response.json();
-      setUsers(data);
+      setUsers(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading users:', error);
+      setUsers([]);
     }
   };
 
@@ -54,9 +56,10 @@ function AdminDashboard({ userId, isAdmin }) {
     try {
       const response = await fetch(`${API_BASE_URL}/api/menu/`);
       const data = await response.json();
-      setMenuItems(data);
+      setMenuItems(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading menu items:', error);
+      setMenuItems([]);
     }
   };
 
@@ -64,9 +67,10 @@ function AdminDashboard({ userId, isAdmin }) {
     try {
       const response = await fetch(`${API_BASE_URL}/api/categories/`);
       const data = await response.json();
-      setCategories(data);
+      setCategories(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading categories:', error);
+      setCategories([]);
     }
   };
 
