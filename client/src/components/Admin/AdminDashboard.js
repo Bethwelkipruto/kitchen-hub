@@ -95,14 +95,22 @@ function AdminDashboard({ userId, isAdmin }) {
     e.preventDefault();
     try {
       const url = editingItem 
-        ? `${API_BASE_URL}/api/admin/menu-items/${editingItem.id}`
-        : `${API_BASE_URL}/api/admin/menu-items`;
-      const method = editingItem ? 'PATCH' : 'POST';
+        ? `${API_BASE_URL}/api/menu/${editingItem.id}`
+        : `${API_BASE_URL}/api/menu/`;
+      const method = editingItem ? 'PUT' : 'POST';
+      
+      const payload = {
+        name: menuForm.name,
+        description: menuForm.description,
+        price: parseFloat(menuForm.price),
+        category_id: parseInt(menuForm.category_id),
+        image_url: menuForm.image_url
+      };
       
       await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...menuForm, user_id: userId, price: parseFloat(menuForm.price) })
+        body: JSON.stringify(payload)
       });
       
       setShowMenuForm(false);
@@ -142,10 +150,20 @@ function AdminDashboard({ userId, isAdmin }) {
 
   const toggleMenuItemAvailability = async (itemId, available) => {
     try {
-      await fetch(`${API_BASE_URL}/api/admin/menu-items/${itemId}`, {
-        method: 'PATCH',
+      const item = menuItems.find(item => item.id === itemId);
+      if (!item) return;
+      
+      await fetch(`${API_BASE_URL}/api/menu/${itemId}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userId, available: !available })
+        body: JSON.stringify({
+          name: item.name,
+          description: item.description,
+          price: item.price,
+          category_id: item.category_id,
+          image_url: item.image_url,
+          available: !available
+        })
       });
       loadMenuItems();
     } catch (error) {
