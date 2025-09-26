@@ -34,6 +34,34 @@ def init_db():
     except Exception as e:
         return f'Error: {str(e)}'
 
+@app.route('/cleanup-users')
+def cleanup_users():
+    try:
+        from models import User
+        
+        # Get all admin users
+        admin_users = User.query.filter_by(username='admin').all()
+        
+        # Delete all admin users
+        for user in admin_users:
+            db.session.delete(user)
+        
+        db.session.commit()
+        
+        # Create single proper admin user
+        admin = User(
+            username='admin',
+            email='admin@mvulecatering.com',
+            is_admin=True
+        )
+        admin.set_password('admin123')
+        db.session.add(admin)
+        db.session.commit()
+        
+        return f'Cleaned up {len(admin_users)} duplicate admin users. Created single admin: admin/admin123'
+    except Exception as e:
+        return f'Error cleaning up users: {str(e)}'
+
 @app.route('/reset-admin')
 def reset_admin():
     try:
