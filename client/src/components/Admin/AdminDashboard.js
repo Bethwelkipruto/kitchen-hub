@@ -124,6 +124,14 @@ function AdminDashboard({ userId, isAdmin }) {
       image_url: item.image_url || ''
     });
     setShowMenuForm(true);
+    
+    // Scroll to form after a brief delay to ensure it's rendered
+    setTimeout(() => {
+      const formElement = document.getElementById('menu-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   };
 
   const addNewMenuItem = () => {
@@ -342,16 +350,24 @@ function AdminDashboard({ userId, isAdmin }) {
           </div>
 
           {showMenuForm && (
-            <div style={{ 
-              backgroundColor: 'white', 
+            <div id="menu-form" style={{ 
+              backgroundColor: editingItem ? '#f0f8ff' : 'white', 
               padding: '2rem', 
               borderRadius: '10px', 
-              boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+              boxShadow: editingItem ? '0 6px 12px rgba(76, 175, 80, 0.3)' : '0 4px 8px rgba(0,0,0,0.1)',
               marginBottom: '2rem',
-              border: '2px solid #4caf50'
+              border: editingItem ? '3px solid #2196f3' : '2px solid #4caf50',
+              animation: editingItem ? 'pulse 0.5s ease-in-out' : 'none'
             }}>
-              <h3 style={{ color: '#2e7d32', marginBottom: '1rem' }}>
-                {editingItem ? '✏️ Edit Menu Item' : '➕ Add New Menu Item'}
+              <h3 style={{ 
+                color: editingItem ? '#1976d2' : '#2e7d32', 
+                marginBottom: '1rem',
+                padding: '0.5rem 1rem',
+                backgroundColor: editingItem ? '#e3f2fd' : '#e8f5e9',
+                borderRadius: '8px',
+                border: editingItem ? '2px solid #2196f3' : '2px solid #4caf50'
+              }}>
+                {editingItem ? `✏️ Editing: ${editingItem.name}` : '➕ Add New Menu Item'}
               </h3>
               <form onSubmit={handleMenuSubmit}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
