@@ -12,6 +12,19 @@ function Navbar() {
     if (isAuthenticated && user && !isAdmin) {
       loadCartCount();
     }
+    
+    // Listen for cart updates
+    const handleCartUpdate = () => {
+      if (isAuthenticated && user && !isAdmin) {
+        loadCartCount();
+      }
+    };
+    
+    window.addEventListener('cartUpdated', handleCartUpdate);
+    
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user, isAdmin]);
 

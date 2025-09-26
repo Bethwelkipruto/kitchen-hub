@@ -17,6 +17,9 @@ function MenuPage() {
         menu_item_id: menuItemId,
         quantity: 1
       });
+      
+      // Trigger cart count refresh in navbar
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
     } catch (error) {
       console.error('Error adding to cart:', error);
     }

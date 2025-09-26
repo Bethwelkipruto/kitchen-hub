@@ -82,6 +82,10 @@ function MenuList({ onAddToCart, userId, isAuthenticated }) {
         quantity: 1
       });
       alert('Item added to cart!');
+      
+      // Trigger cart count refresh in navbar
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
+      
       if (onAddToCart) {
         onAddToCart(menuItemId);
       }
