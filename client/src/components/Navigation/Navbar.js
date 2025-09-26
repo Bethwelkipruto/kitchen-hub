@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5555';
+const API_BASE_URL = 'http://localhost:5555';
 
 function Navbar() {
   const { user, logout, isAuthenticated, isAdmin } = useAuth();

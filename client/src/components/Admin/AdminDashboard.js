@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5555';
+const API_BASE_URL = 'http://localhost:5555';
 
 function AdminDashboard({ userId, isAdmin }) {
   const [activeTab, setActiveTab] = useState('dashboard');
