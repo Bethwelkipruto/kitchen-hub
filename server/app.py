@@ -31,6 +31,49 @@ def init_db():
     except Exception as e:
         return f'Error: {str(e)}'
 
+@app.route('/create-test-data')
+def create_test_data():
+    try:
+        from models import Category, MenuItem
+        
+        # Create categories if they don't exist
+        categories_data = [
+            {'name': 'Appetizers', 'description': 'Start your meal right'},
+            {'name': 'Main Course', 'description': 'Hearty main dishes'},
+            {'name': 'Desserts', 'description': 'Sweet endings'},
+            {'name': 'Beverages', 'description': 'Refreshing drinks'}
+        ]
+        
+        for cat_data in categories_data:
+            existing = Category.query.filter_by(name=cat_data['name']).first()
+            if not existing:
+                category = Category(name=cat_data['name'], description=cat_data['description'])
+                db.session.add(category)
+        
+        db.session.commit()
+        
+        # Get category IDs
+        appetizers = Category.query.filter_by(name='Appetizers').first()
+        main_course = Category.query.filter_by(name='Main Course').first()
+        
+        # Create sample menu items
+        menu_items = [
+            {'name': 'Caesar Salad', 'description': 'Fresh romaine lettuce with caesar dressing', 'price': 12.99, 'category_id': appetizers.id},
+            {'name': 'Grilled Chicken', 'description': 'Juicy grilled chicken breast', 'price': 18.99, 'category_id': main_course.id}
+        ]
+        
+        for item_data in menu_items:
+            existing = MenuItem.query.filter_by(name=item_data['name']).first()
+            if not existing:
+                item = MenuItem(**item_data)
+                db.session.add(item)
+        
+        db.session.commit()
+        
+        return 'Test data created successfully!'
+    except Exception as e:
+        return f'Error creating test data: {str(e)}'
+
 @app.route('/cleanup-users')
 def cleanup_users():
     try:
