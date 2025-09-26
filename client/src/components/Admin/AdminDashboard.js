@@ -84,39 +84,26 @@ function AdminDashboard({ userId, isAdmin }) {
     }
   };
 
-  const toggleMenuItemAvailability = async (itemId, available) => {
-    try {
-      await fetch(`${API_BASE_URL}/api/admin/menu-items/${itemId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userId, available: !available })
-      });
-      loadMenuItems();
-    } catch (error) {
-      console.error('Error updating menu item:', error);
-    }
-  };
-
   if (!isAdmin) {
     return <div style={{ padding: '2rem', textAlign: 'center' }}>Access denied. Admin privileges required.</div>;
   }
 
   const tabStyle = (tab) => ({
     padding: '1rem 2rem',
-    backgroundColor: activeTab === tab ? '#007bff' : '#f8f9fa',
-    color: activeTab === tab ? 'white' : '#333',
-    border: 'none',
+    backgroundColor: activeTab === tab ? '#4caf50' : 'white',
+    color: activeTab === tab ? 'white' : '#2e7d32',
+    border: activeTab === tab ? '2px solid #4caf50' : '2px solid #e8f5e9',
     cursor: 'pointer',
-    borderRadius: '5px 5px 0 0',
-    marginRight: '0.5rem'
+    borderRadius: '8px 8px 0 0',
+    marginRight: '0.5rem',
+    fontWeight: 'bold'
   });
 
   return (
     <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1 style={{ color: '#333', marginBottom: '2rem' }}>🏪 Kitchen Hub Admin Panel</h1>
+      <h1 style={{ color: '#2e7d32', marginBottom: '2rem', textAlign: 'center' }}>🏪 Kitchen Hub Admin Panel</h1>
       
-      {/* Navigation Tabs */}
-      <div style={{ marginBottom: '2rem', borderBottom: '2px solid #dee2e6' }}>
+      <div style={{ marginBottom: '2rem', borderBottom: '2px solid #4caf50' }}>
         <button style={tabStyle('dashboard')} onClick={() => setActiveTab('dashboard')}>📊 Dashboard</button>
         <button style={tabStyle('orders')} onClick={() => setActiveTab('orders')}>📋 Orders</button>
         <button style={tabStyle('menu')} onClick={() => setActiveTab('menu')}>🍽️ Menu</button>
@@ -124,59 +111,50 @@ function AdminDashboard({ userId, isAdmin }) {
         <button style={tabStyle('categories')} onClick={() => setActiveTab('categories')}>📂 Categories</button>
       </div>
 
-      {/* Dashboard Tab */}
       {activeTab === 'dashboard' && (
         <div>
-          <h2>📈 Business Overview</h2>
+          <h2 style={{ color: '#2e7d32', borderBottom: '2px solid #4caf50', paddingBottom: '0.5rem' }}>📈 Business Overview</h2>
           {stats && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-              <div style={{ padding: '1.5rem', backgroundColor: '#e3f2fd', borderRadius: '10px', border: '1px solid #bbdefb' }}>
-                <h3 style={{ margin: '0 0 0.5rem 0', color: '#1976d2' }}>👥 Total Users</h3>
-                <p style={{ fontSize: '2.5rem', margin: 0, fontWeight: 'bold', color: '#1976d2' }}>{stats.total_users}</p>
+              <div style={{ padding: '1.5rem', backgroundColor: 'white', borderRadius: '10px', border: '2px solid #4caf50', boxShadow: '0 4px 8px rgba(76, 175, 80, 0.1)' }}>
+                <h3 style={{ margin: '0 0 0.5rem 0', color: '#2e7d32' }}>👥 Total Users</h3>
+                <p style={{ fontSize: '2.5rem', margin: 0, fontWeight: 'bold', color: '#4caf50' }}>{stats.total_users}</p>
               </div>
-              <div style={{ padding: '1.5rem', backgroundColor: '#f3e5f5', borderRadius: '10px', border: '1px solid #ce93d8' }}>
-                <h3 style={{ margin: '0 0 0.5rem 0', color: '#7b1fa2' }}>📋 Total Orders</h3>
-                <p style={{ fontSize: '2.5rem', margin: 0, fontWeight: 'bold', color: '#7b1fa2' }}>{stats.total_orders}</p>
+              <div style={{ padding: '1.5rem', backgroundColor: 'white', borderRadius: '10px', border: '2px solid #66bb6a', boxShadow: '0 4px 8px rgba(102, 187, 106, 0.1)' }}>
+                <h3 style={{ margin: '0 0 0.5rem 0', color: '#2e7d32' }}>📋 Total Orders</h3>
+                <p style={{ fontSize: '2.5rem', margin: 0, fontWeight: 'bold', color: '#66bb6a' }}>{stats.total_orders}</p>
               </div>
-              <div style={{ padding: '1.5rem', backgroundColor: '#e8f5e8', borderRadius: '10px', border: '1px solid #a5d6a7' }}>
-                <h3 style={{ margin: '0 0 0.5rem 0', color: '#388e3c' }}>🍽️ Menu Items</h3>
-                <p style={{ fontSize: '2.5rem', margin: 0, fontWeight: 'bold', color: '#388e3c' }}>{stats.total_menu_items}</p>
+              <div style={{ padding: '1.5rem', backgroundColor: 'white', borderRadius: '10px', border: '2px solid #81c784', boxShadow: '0 4px 8px rgba(129, 199, 132, 0.1)' }}>
+                <h3 style={{ margin: '0 0 0.5rem 0', color: '#2e7d32' }}>🍽️ Menu Items</h3>
+                <p style={{ fontSize: '2.5rem', margin: 0, fontWeight: 'bold', color: '#81c784' }}>{stats.total_menu_items}</p>
               </div>
-              <div style={{ padding: '1.5rem', backgroundColor: '#fff3e0', borderRadius: '10px', border: '1px solid #ffcc02' }}>
-                <h3 style={{ margin: '0 0 0.5rem 0', color: '#f57c00' }}>⏳ Pending Orders</h3>
-                <p style={{ fontSize: '2.5rem', margin: 0, fontWeight: 'bold', color: '#f57c00' }}>{stats.pending_orders}</p>
+              <div style={{ padding: '1.5rem', backgroundColor: '#e8f5e9', borderRadius: '10px', border: '2px solid #4caf50', boxShadow: '0 4px 8px rgba(76, 175, 80, 0.1)' }}>
+                <h3 style={{ margin: '0 0 0.5rem 0', color: '#2e7d32' }}>⏳ Pending Orders</h3>
+                <p style={{ fontSize: '2.5rem', margin: 0, fontWeight: 'bold', color: '#4caf50' }}>{stats.pending_orders}</p>
               </div>
             </div>
           )}
-          
-          <h3>📊 Recent Activity</h3>
-          <div style={{ backgroundColor: '#f8f9fa', padding: '1rem', borderRadius: '5px' }}>
-            <p>• {orders.filter(o => o.status === 'pending').length} orders awaiting approval</p>
-            <p>• {orders.filter(o => o.status === 'preparing').length} orders in preparation</p>
-            <p>• {menuItems.filter(m => !m.available).length} menu items currently unavailable</p>
-          </div>
         </div>
       )}
 
-      {/* Orders Management Tab */}
       {activeTab === 'orders' && (
         <div>
-          <h2>📋 Order Management</h2>
+          <h2 style={{ color: '#2e7d32', borderBottom: '2px solid #4caf50', paddingBottom: '0.5rem' }}>📋 Order Management</h2>
           <div style={{ overflowX: 'auto', backgroundColor: 'white', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ backgroundColor: '#f8f9fa' }}>
-                  <th style={{ padding: '1rem', border: '1px solid #dee2e6', fontWeight: 'bold' }}>Order #</th>
-                  <th style={{ padding: '1rem', border: '1px solid #dee2e6', fontWeight: 'bold' }}>Customer</th>
-                  <th style={{ padding: '1rem', border: '1px solid #dee2e6', fontWeight: 'bold' }}>Total</th>
-                  <th style={{ padding: '1rem', border: '1px solid #dee2e6', fontWeight: 'bold' }}>Status</th>
-                  <th style={{ padding: '1rem', border: '1px solid #dee2e6', fontWeight: 'bold' }}>Date</th>
-                  <th style={{ padding: '1rem', border: '1px solid #dee2e6', fontWeight: 'bold' }}>Actions</th>
+                <tr style={{ backgroundColor: '#e8f5e9' }}>
+                  <th style={{ padding: '1rem', border: '1px solid #4caf50', fontWeight: 'bold', color: '#2e7d32' }}>Order #</th>
+                  <th style={{ padding: '1rem', border: '1px solid #4caf50', fontWeight: 'bold', color: '#2e7d32' }}>Customer</th>
+                  <th style={{ padding: '1rem', border: '1px solid #4caf50', fontWeight: 'bold', color: '#2e7d32' }}>Total</th>
+                  <th style={{ padding: '1rem', border: '1px solid #4caf50', fontWeight: 'bold', color: '#2e7d32' }}>Status</th>
+                  <th style={{ padding: '1rem', border: '1px solid #4caf50', fontWeight: 'bold', color: '#2e7d32' }}>Date</th>
+                  <th style={{ padding: '1rem', border: '1px solid #4caf50', fontWeight: 'bold', color: '#2e7d32' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {orders.map(order => (
-                  <tr key={order.id} style={{ borderBottom: '1px solid #dee2e6' }}>
+                  <tr key={order.id}>
                     <td style={{ padding: '1rem', border: '1px solid #dee2e6' }}>#{order.id}</td>
                     <td style={{ padding: '1rem', border: '1px solid #dee2e6' }}>{order.username}</td>
                     <td style={{ padding: '1rem', border: '1px solid #dee2e6', fontWeight: 'bold' }}>${order.total_amount?.toFixed(2)}</td>
@@ -186,16 +164,7 @@ function AdminDashboard({ userId, isAdmin }) {
                         borderRadius: '20px',
                         fontSize: '0.8rem',
                         fontWeight: 'bold',
-                        backgroundColor: 
-                          order.status === 'pending' ? '#fff3cd' : 
-                          order.status === 'preparing' ? '#cce5ff' :
-                          order.status === 'ready' ? '#d4edda' :
-                          order.status === 'completed' ? '#d1ecf1' : '#f8d7da',
-                        color:
-                          order.status === 'pending' ? '#856404' : 
-                          order.status === 'preparing' ? '#004085' :
-                          order.status === 'ready' ? '#155724' :
-                          order.status === 'completed' ? '#0c5460' : '#721c24'
+                        backgroundColor: order.status === 'pending' ? '#fff3cd' : order.status === 'completed' ? '#d4edda' : '#f8d7da'
                       }}>
                         {order.status.toUpperCase()}
                       </span>
@@ -207,12 +176,7 @@ function AdminDashboard({ userId, isAdmin }) {
                       <select 
                         value={order.status} 
                         onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                        style={{ 
-                          padding: '0.5rem', 
-                          borderRadius: '5px', 
-                          border: '1px solid #ced4da',
-                          backgroundColor: 'white'
-                        }}
+                        style={{ padding: '0.5rem', borderRadius: '5px', border: '1px solid #ced4da' }}
                       >
                         <option value="pending">⏳ Pending</option>
                         <option value="preparing">👨‍🍳 Preparing</option>
@@ -229,10 +193,9 @@ function AdminDashboard({ userId, isAdmin }) {
         </div>
       )}
 
-      {/* Menu Management Tab */}
       {activeTab === 'menu' && (
         <div>
-          <h2>🍽️ Menu Management</h2>
+          <h2 style={{ color: '#2e7d32', borderBottom: '2px solid #4caf50', paddingBottom: '0.5rem' }}>🍽️ Menu Management</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
             {menuItems.map(item => (
               <div key={item.id} style={{ 
@@ -245,54 +208,38 @@ function AdminDashboard({ userId, isAdmin }) {
                 <h4 style={{ margin: '0 0 0.5rem 0', color: '#333' }}>{item.name}</h4>
                 <p style={{ margin: '0 0 0.5rem 0', color: '#666', fontSize: '0.9rem' }}>{item.description}</p>
                 <p style={{ margin: '0 0 1rem 0', fontWeight: 'bold', fontSize: '1.2rem', color: '#007bff' }}>${item.price}</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ 
-                    padding: '0.25rem 0.5rem', 
-                    borderRadius: '15px',
-                    fontSize: '0.8rem',
-                    backgroundColor: item.available ? '#d4edda' : '#f8d7da',
-                    color: item.available ? '#155724' : '#721c24'
-                  }}>
-                    {item.available ? '✅ Available' : '❌ Unavailable'}
-                  </span>
-                  <button 
-                    onClick={() => toggleMenuItemAvailability(item.id, item.available)}
-                    style={{
-                      padding: '0.5rem 1rem',
-                      borderRadius: '5px',
-                      border: 'none',
-                      backgroundColor: item.available ? '#dc3545' : '#28a745',
-                      color: 'white',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {item.available ? 'Disable' : 'Enable'}
-                  </button>
-                </div>
+                <span style={{ 
+                  padding: '0.25rem 0.5rem', 
+                  borderRadius: '15px',
+                  fontSize: '0.8rem',
+                  backgroundColor: item.available ? '#d4edda' : '#f8d7da',
+                  color: item.available ? '#155724' : '#721c24'
+                }}>
+                  {item.available ? '✅ Available' : '❌ Unavailable'}
+                </span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Users Management Tab */}
       {activeTab === 'users' && (
         <div>
-          <h2>👥 User Management</h2>
+          <h2 style={{ color: '#2e7d32', borderBottom: '2px solid #4caf50', paddingBottom: '0.5rem' }}>👥 User Management</h2>
           <div style={{ overflowX: 'auto', backgroundColor: 'white', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ backgroundColor: '#f8f9fa' }}>
-                  <th style={{ padding: '1rem', border: '1px solid #dee2e6', fontWeight: 'bold' }}>ID</th>
-                  <th style={{ padding: '1rem', border: '1px solid #dee2e6', fontWeight: 'bold' }}>Username</th>
-                  <th style={{ padding: '1rem', border: '1px solid #dee2e6', fontWeight: 'bold' }}>Email</th>
-                  <th style={{ padding: '1rem', border: '1px solid #dee2e6', fontWeight: 'bold' }}>Role</th>
-                  <th style={{ padding: '1rem', border: '1px solid #dee2e6', fontWeight: 'bold' }}>Joined</th>
+                <tr style={{ backgroundColor: '#e8f5e9' }}>
+                  <th style={{ padding: '1rem', border: '1px solid #4caf50', fontWeight: 'bold', color: '#2e7d32' }}>ID</th>
+                  <th style={{ padding: '1rem', border: '1px solid #4caf50', fontWeight: 'bold', color: '#2e7d32' }}>Username</th>
+                  <th style={{ padding: '1rem', border: '1px solid #4caf50', fontWeight: 'bold', color: '#2e7d32' }}>Email</th>
+                  <th style={{ padding: '1rem', border: '1px solid #4caf50', fontWeight: 'bold', color: '#2e7d32' }}>Role</th>
+                  <th style={{ padding: '1rem', border: '1px solid #4caf50', fontWeight: 'bold', color: '#2e7d32' }}>Joined</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map(user => (
-                  <tr key={user.id} style={{ borderBottom: '1px solid #dee2e6' }}>
+                  <tr key={user.id}>
                     <td style={{ padding: '1rem', border: '1px solid #dee2e6' }}>{user.id}</td>
                     <td style={{ padding: '1rem', border: '1px solid #dee2e6', fontWeight: 'bold' }}>{user.username}</td>
                     <td style={{ padding: '1rem', border: '1px solid #dee2e6' }}>{user.email}</td>
@@ -318,10 +265,9 @@ function AdminDashboard({ userId, isAdmin }) {
         </div>
       )}
 
-      {/* Categories Management Tab */}
       {activeTab === 'categories' && (
         <div>
-          <h2>📂 Category Management</h2>
+          <h2 style={{ color: '#2e7d32', borderBottom: '2px solid #4caf50', paddingBottom: '0.5rem' }}>📂 Category Management</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
             {categories.map(category => (
               <div key={category.id} style={{ 
