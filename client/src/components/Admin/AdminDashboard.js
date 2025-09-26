@@ -12,6 +12,8 @@ function AdminDashboard({ userId, isAdmin }) {
   const [showMenuForm, setShowMenuForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [menuForm, setMenuForm] = useState({ name: '', description: '', price: '', category_id: '', image_url: '' });
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
+  const [categoryForm, setCategoryForm] = useState({ name: '', description: '' });
 
   useEffect(() => {
     if (isAdmin) {
@@ -196,6 +198,29 @@ function AdminDashboard({ userId, isAdmin }) {
       loadMenuItems();
     } catch (error) {
       console.error('Error updating menu item:', error);
+    }
+  };
+
+  const handleCategorySubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/categories/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(categoryForm)
+      });
+      
+      if (response.ok) {
+        setShowCategoryForm(false);
+        setCategoryForm({ name: '', description: '' });
+        loadCategories();
+        alert('Category created successfully!');
+      } else {
+        alert('Failed to create category');
+      }
+    } catch (error) {
+      console.error('Error creating category:', error);
+      alert('Error creating category');
     }
   };
 
@@ -620,7 +645,84 @@ function AdminDashboard({ userId, isAdmin }) {
 
       {activeTab === 'categories' && (
         <div>
-          <h2 style={{ color: '#2e7d32', borderBottom: '2px solid #4caf50', paddingBottom: '0.5rem' }}>📂 Category Management</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2 style={{ color: '#2e7d32', borderBottom: '2px solid #4caf50', paddingBottom: '0.5rem' }}>📂 Category Management</h2>
+            <button 
+              onClick={() => setShowCategoryForm(true)}
+              style={{
+                padding: '0.75rem 1.5rem',
+                backgroundColor: '#4caf50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                fontWeight: 'bold'
+              }}
+            >
+              ➕ Add Category
+            </button>
+          </div>
+
+          {showCategoryForm && (
+            <div style={{ 
+              backgroundColor: 'white', 
+              padding: '2rem', 
+              borderRadius: '10px', 
+              boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+              marginBottom: '2rem',
+              border: '2px solid #4caf50'
+            }}>
+              <h3 style={{ color: '#2e7d32', marginBottom: '1rem' }}>➕ Add New Category</h3>
+              <form onSubmit={handleCategorySubmit}>
+                <input
+                  type="text"
+                  placeholder="Category Name"
+                  value={categoryForm.name}
+                  onChange={(e) => setCategoryForm({...categoryForm, name: e.target.value})}
+                  style={{ width: '100%', padding: '0.75rem', border: '2px solid #e8f5e9', borderRadius: '5px', marginBottom: '1rem' }}
+                  required
+                />
+                <textarea
+                  placeholder="Category Description"
+                  value={categoryForm.description}
+                  onChange={(e) => setCategoryForm({...categoryForm, description: e.target.value})}
+                  style={{ width: '100%', padding: '0.75rem', border: '2px solid #e8f5e9', borderRadius: '5px', marginBottom: '1rem', minHeight: '80px' }}
+                />
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <button 
+                    type="submit"
+                    style={{
+                      padding: '0.75rem 2rem',
+                      backgroundColor: '#4caf50',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    ➕ Create Category
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => setShowCategoryForm(false)}
+                    style={{
+                      padding: '0.75rem 2rem',
+                      backgroundColor: '#f44336',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    ❌ Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
             {categories.map(category => (
               <div key={category.id} style={{ 
@@ -628,12 +730,12 @@ function AdminDashboard({ userId, isAdmin }) {
                 padding: '1.5rem', 
                 borderRadius: '10px', 
                 boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                border: '1px solid #dee2e6'
+                border: '2px solid #4caf50'
               }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: '#333' }}>{category.name}</h4>
-                <p style={{ margin: 0, color: '#666', fontSize: '0.9rem' }}>{category.description}</p>
-                <p style={{ margin: '1rem 0 0 0', fontSize: '0.8rem', color: '#007bff' }}>
-                  {menuItems.filter(item => item.category_id === category.id).length} items
+                <h4 style={{ margin: '0 0 0.5rem 0', color: '#2e7d32' }}>{category.name}</h4>
+                <p style={{ margin: '0 0 1rem 0', color: '#666', fontSize: '0.9rem' }}>{category.description}</p>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: '#4caf50', fontWeight: 'bold' }}>
+                  🍽️ {menuItems.filter(item => item.category_id === category.id).length} items
                 </p>
               </div>
             ))}
