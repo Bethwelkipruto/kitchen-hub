@@ -104,21 +104,37 @@ function AdminDashboard({ userId, isAdmin }) {
         description: menuForm.description,
         price: parseFloat(menuForm.price),
         category_id: parseInt(menuForm.category_id),
-        image_url: menuForm.image_url
+        image_url: menuForm.image_url || null
       };
       
-      await fetch(url, {
+      console.log('Submitting menu item:', payload);
+      console.log('URL:', url, 'Method:', method);
+      
+      const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
       
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Server error:', response.status, errorData);
+        alert(`Error: ${response.status} - ${errorData}`);
+        return;
+      }
+      
+      const result = await response.json();
+      console.log('Success:', result);
+      
       setShowMenuForm(false);
       setEditingItem(null);
       setMenuForm({ name: '', description: '', price: '', category_id: '', image_url: '' });
       loadMenuItems();
+      
+      alert(editingItem ? 'Menu item updated successfully!' : 'Menu item created successfully!');
     } catch (error) {
       console.error('Error saving menu item:', error);
+      alert('Failed to save menu item. Check console for details.');
     }
   };
 
