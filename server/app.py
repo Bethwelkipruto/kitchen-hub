@@ -34,10 +34,45 @@ def init_db():
     except Exception as e:
         return f'Error: {str(e)}'
 
+@app.route('/create-admin')
+def create_admin():
+    try:
+        from models import User
+        
+        # Check if admin exists
+        admin = User.query.filter_by(username='admin').first()
+        if admin:
+            return 'Admin user already exists!'
+        
+        # Create admin user
+        admin = User(
+            username='admin',
+            email='admin@mvulecatering.com',
+            is_admin=True
+        )
+        admin.set_password('admin123')
+        db.session.add(admin)
+        db.session.commit()
+        
+        return 'Admin user created successfully! Username: admin, Password: admin123'
+    except Exception as e:
+        return f'Error creating admin: {str(e)}'
+
 @app.route('/seed-db')
 def seed_db():
     try:
         from models import User, Category, MenuItem
+        
+        # Create admin first
+        admin = User.query.filter_by(username='admin').first()
+        if not admin:
+            admin = User(
+                username='admin',
+                email='admin@mvulecatering.com',
+                is_admin=True
+            )
+            admin.set_password('admin123')
+            db.session.add(admin)
         
         # Create categories
         categories = [
@@ -64,7 +99,7 @@ def seed_db():
                 db.session.add(item)
         
         db.session.commit()
-        return 'Database seeded successfully!'
+        return 'Database seeded successfully with admin user!'
     except Exception as e:
         return f'Seed Error: {str(e)}'
 
