@@ -21,7 +21,7 @@ function Navbar() {
             <>
               <Link to="/cart">Cart</Link>
               <Link to="/orders">My Orders</Link>
-              {isAdmin && (
+              {(isAdmin || user?.username === 'admin') && (
                 <Link to="/admin">Admin Dashboard</Link>
               )}
             </>

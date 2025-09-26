@@ -1,14 +1,22 @@
 import React from 'react';
+import { useAuth } from '../context/AuthContext';
 import AdminDashboard from '../components/Admin/AdminDashboard';
 
 function AdminPage() {
-  // For demo purposes, using admin user ID 4. In a real app, get from auth context
-  const userId = 4;
-  const isAdmin = true;
+  const { user, isAdmin } = useAuth();
+
+  if (!isAdmin) {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center' }}>
+        <h2>Access Denied</h2>
+        <p>You need admin privileges to access this page.</p>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <AdminDashboard userId={userId} isAdmin={isAdmin} />
+      <AdminDashboard userId={user?.id} isAdmin={isAdmin} />
     </div>
   );
 }

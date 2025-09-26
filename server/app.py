@@ -34,6 +34,31 @@ def init_db():
     except Exception as e:
         return f'Error: {str(e)}'
 
+@app.route('/reset-admin')
+def reset_admin():
+    try:
+        from models import User
+        
+        # Delete existing admin
+        admin = User.query.filter_by(username='admin').first()
+        if admin:
+            db.session.delete(admin)
+            db.session.commit()
+        
+        # Create fresh admin user
+        admin = User(
+            username='admin',
+            email='admin@mvulecatering.com',
+            is_admin=True
+        )
+        admin.set_password('admin123')
+        db.session.add(admin)
+        db.session.commit()
+        
+        return 'Admin user reset successfully! Username: admin, Password: admin123'
+    except Exception as e:
+        return f'Error resetting admin: {str(e)}'
+
 @app.route('/create-admin')
 def create_admin():
     try:
@@ -104,5 +129,5 @@ def seed_db():
         return f'Seed Error: {str(e)}'
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(port=5555, debug=True)
 
