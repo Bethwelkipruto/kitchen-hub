@@ -138,7 +138,7 @@ function AdminDashboard({ userId, isAdmin }) {
                 <h3 style={{ margin: '0 0 0.5rem 0', color: '#7b1fa2' }}>📋 Total Orders</h3>
                 <p style={{ fontSize: '2.5rem', margin: 0, fontWeight: 'bold', color: '#7b1fa2' }}>{stats.total_orders}</p>
               </div>
-              <div style={{ padding: '1.5rem', backgroundColor: '#e8f5e8', borderRadius: '10px', border: '1px solid '#a5d6a7' }}>
+              <div style={{ padding: '1.5rem', backgroundColor: '#e8f5e8', borderRadius: '10px', border: '1px solid #a5d6a7' }}>
                 <h3 style={{ margin: '0 0 0.5rem 0', color: '#388e3c' }}>🍽️ Menu Items</h3>
                 <p style={{ fontSize: '2.5rem', margin: 0, fontWeight: 'bold', color: '#388e3c' }}>{stats.total_menu_items}</p>
               </div>
