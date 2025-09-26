@@ -12,7 +12,7 @@ function Navbar() {
     if (isAuthenticated && user && !isAdmin) {
       loadCartCount();
     }
-  }, [isAuthenticated, user, isAdmin]);
+  }, [isAuthenticated, user, isAdmin, loadCartCount]);
 
   const loadCartCount = async () => {
     try {
