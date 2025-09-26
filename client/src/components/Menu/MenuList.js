@@ -119,7 +119,7 @@ function MenuList({ onAddToCart, userId, isAuthenticated }) {
           border: '2px solid #4caf50'
         }}>
           <p style={{ margin: '0 0 1rem 0', color: '#2e7d32' }}>
-            🍽️ Browse our delicious menu! <a href="/register" style={{ color: '#4caf50', fontWeight: 'bold' }}>Register</a> or <a href="/login" style={{ color: '#4caf50', fontWeight: 'bold' }}>Login</a> to order.
+            Browse our delicious menu! <a href="/register" style={{ color: '#4caf50', fontWeight: 'bold' }}>Register</a> or <a href="/login" style={{ color: '#4caf50', fontWeight: 'bold' }}>Login</a> to order.
           </p>
         </div>
       )}

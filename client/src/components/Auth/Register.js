@@ -29,7 +29,10 @@ function Register() {
     setLoading(true);
     const result = await register(formData.username, formData.email, formData.password);
     
-    if (!result.success) {
+    if (result.success) {
+      alert('Account created successfully! Welcome to Kitchen Hub!');
+      window.location.href = '/menu';
+    } else {
       setError(result.error);
     }
     setLoading(false);
@@ -53,7 +56,7 @@ function Register() {
       border: '2px solid #4caf50'
     }}>
       <h2 style={{ textAlign: 'center', color: '#2e7d32', marginBottom: '2rem' }}>
-        🍽️ Join Kitchen Hub
+        Join Kitchen Hub
       </h2>
       
       {error && (
@@ -157,7 +160,7 @@ function Register() {
             cursor: loading ? 'not-allowed' : 'pointer'
           }}
         >
-          {loading ? '🔄 Creating Account...' : '✅ Create Account'}
+          {loading ? 'Creating Account...' : 'Create Account'}
         </button>
       </form>
     </div>

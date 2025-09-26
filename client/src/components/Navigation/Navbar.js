@@ -43,7 +43,7 @@ function Navbar() {
             <>
               {!isAdmin && (
                 <Link to="/cart" style={{ position: 'relative', display: 'inline-block' }}>
-                  🛒 Cart
+                  Cart
                   {cartCount > 0 && (
                     <span style={{
                       position: 'absolute',
