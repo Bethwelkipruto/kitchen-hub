@@ -467,25 +467,45 @@ function AdminDashboard({ userId, isAdmin }) {
                   style={{ width: '100%', padding: '0.75rem', border: '2px solid #e8f5e9', borderRadius: '5px', marginBottom: '1rem', minHeight: '80px' }}
                   required
                 />
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                  <select
-                    value={menuForm.category_id}
-                    onChange={(e) => setMenuForm({...menuForm, category_id: e.target.value})}
-                    style={{ padding: '0.75rem', border: '2px solid #e8f5e9', borderRadius: '5px' }}
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    {categories.map(cat => (
-                      <option key={cat.id} value={cat.id}>{cat.name}</option>
-                    ))}
-                  </select>
+                <select
+                  value={menuForm.category_id}
+                  onChange={(e) => setMenuForm({...menuForm, category_id: e.target.value})}
+                  style={{ width: '100%', padding: '0.75rem', border: '2px solid #e8f5e9', borderRadius: '5px', marginBottom: '1rem' }}
+                  required
+                >
+                  <option value="">Select Category</option>
+                  {categories.map(cat => (
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  ))}
+                </select>
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#2e7d32' }}>Food Image URL:</label>
                   <input
                     type="url"
-                    placeholder="Image URL (optional)"
+                    placeholder="https://example.com/food-image.jpg"
                     value={menuForm.image_url}
                     onChange={(e) => setMenuForm({...menuForm, image_url: e.target.value})}
-                    style={{ padding: '0.75rem', border: '2px solid #e8f5e9', borderRadius: '5px' }}
+                    style={{ width: '100%', padding: '0.75rem', border: '2px solid #e8f5e9', borderRadius: '5px' }}
                   />
+                  <small style={{ color: '#666', fontSize: '0.8rem' }}>Add an image URL to display the food photo</small>
+                  {menuForm.image_url && (
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <img 
+                        src={menuForm.image_url} 
+                        alt="Preview"
+                        style={{ 
+                          width: '100px', 
+                          height: '100px', 
+                          objectFit: 'cover', 
+                          borderRadius: '8px',
+                          border: '2px solid #4caf50'
+                        }}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                   <button 
@@ -551,6 +571,22 @@ function AdminDashboard({ userId, isAdmin }) {
                 boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
                 border: item.available ? '2px solid #4caf50' : '2px solid #f44336'
               }}>
+                {item.image_url && (
+                  <img 
+                    src={item.image_url} 
+                    alt={item.name}
+                    style={{ 
+                      width: '100%', 
+                      height: '150px', 
+                      objectFit: 'cover', 
+                      borderRadius: '8px', 
+                      marginBottom: '1rem'
+                    }}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                )}
                 <h4 style={{ margin: '0 0 0.5rem 0', color: '#2e7d32' }}>{item.name}</h4>
                 <p style={{ margin: '0 0 0.5rem 0', color: '#666', fontSize: '0.9rem' }}>{item.description}</p>
                 <p style={{ margin: '0 0 1rem 0', fontWeight: 'bold', fontSize: '1.2rem', color: '#4caf50' }}>${item.price}</p>
