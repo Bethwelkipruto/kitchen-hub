@@ -187,7 +187,74 @@ function AdminDashboard({ userId, isAdmin }) {
 
       {activeTab === 'orders' && (
         <div>
-          <h2 style={{ color: '#2e7d32', borderBottom: '2px solid #4caf50', paddingBottom: '0.5rem' }}>📋 Order Management</h2>
+          <h2 style={{ color: '#2e7d32', borderBottom: '2px solid #4caf50', paddingBottom: '0.5rem' }}>📋 Order Management & Approval</h2>
+          
+          {/* Quick Actions for Pending Orders */}
+          {orders.filter(o => o.status === 'pending').length > 0 && (
+            <div style={{ backgroundColor: '#fff3e0', padding: '1.5rem', borderRadius: '10px', marginBottom: '2rem', border: '2px solid #ff9800' }}>
+              <h3 style={{ color: '#e65100', margin: '0 0 1rem 0' }}>⚠️ Orders Awaiting Your Approval ({orders.filter(o => o.status === 'pending').length})</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+                {orders.filter(o => o.status === 'pending').map(order => (
+                  <div key={order.id} style={{ 
+                    backgroundColor: 'white', 
+                    padding: '1.5rem', 
+                    borderRadius: '10px', 
+                    border: '2px solid #ff9800',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                      <h4 style={{ margin: 0, color: '#2e7d32' }}>Order #{order.id}</h4>
+                      <span style={{ 
+                        padding: '0.25rem 0.75rem', 
+                        backgroundColor: '#fff3e0', 
+                        color: '#e65100', 
+                        borderRadius: '15px', 
+                        fontSize: '0.8rem',
+                        fontWeight: 'bold'
+                      }}>
+                        ⏳ PENDING
+                      </span>
+                    </div>
+                    <p style={{ margin: '0 0 0.5rem 0', color: '#666' }}>👤 Customer: <strong>{order.username}</strong></p>
+                    <p style={{ margin: '0 0 1.5rem 0', color: '#4caf50', fontWeight: 'bold', fontSize: '1.2rem' }}>💰 ${order.total_amount?.toFixed(2)}</p>
+                    <div style={{ display: 'flex', gap: '0.75rem' }}>
+                      <button 
+                        onClick={() => updateOrderStatus(order.id, 'preparing')}
+                        style={{
+                          flex: 1,
+                          padding: '0.75rem',
+                          backgroundColor: '#4caf50',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                          fontSize: '0.9rem'
+                        }}
+                      >
+                        ✅ APPROVE & START COOKING
+                      </button>
+                      <button 
+                        onClick={() => updateOrderStatus(order.id, 'cancelled')}
+                        style={{
+                          padding: '0.75rem',
+                          backgroundColor: '#f44336',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                          fontSize: '0.9rem'
+                        }}
+                      >
+                        ❌ REJECT
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           <div style={{ overflowX: 'auto', backgroundColor: 'white', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
