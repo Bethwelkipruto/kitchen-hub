@@ -12,6 +12,7 @@ function Navbar() {
     if (isAuthenticated && user && !isAdmin) {
       loadCartCount();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user, isAdmin]);
 
   const loadCartCount = async () => {

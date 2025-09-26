@@ -24,6 +24,7 @@ function AdminDashboard({ userId, isAdmin }) {
       loadMenuItems();
       loadCategories();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
   const loadDashboard = async () => {
