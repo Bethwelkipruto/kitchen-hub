@@ -24,5 +24,8 @@ app.register_blueprint(auth_bp)
 # ------------------------
 # CORS setup
 # ------------------------
+# ...existing code...
 CORS(app, supports_credentials=True, origins=[
-    os.environ.get("FRONTEND_URL"_
+   os.environ.get("FRONTEND_URL", "http://localhost:3000")
+])
+# ...existing code...
