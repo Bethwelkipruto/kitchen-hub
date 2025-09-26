@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MenuItem from './MenuItem';
 import { getMenuItems } from '../../services/menuService';
 import { getCategories } from '../../services/categoryService';
+import { orderService } from '../../services/orderService';
 
 function MenuList({ onAddToCart, userId, isAuthenticated }) {
   const [menuItems, setMenuItems] = useState([]);
@@ -69,8 +70,24 @@ function MenuList({ onAddToCart, userId, isAuthenticated }) {
 
 
   const handleAddToCart = async (menuItemId) => {
-    if (onAddToCart) {
-      onAddToCart(menuItemId);
+    if (!isAuthenticated) {
+      alert('Please login to add items to cart');
+      return;
+    }
+    
+    try {
+      await orderService.addToCart({
+        user_id: userId,
+        menu_item_id: menuItemId,
+        quantity: 1
+      });
+      alert('Item added to cart!');
+      if (onAddToCart) {
+        onAddToCart(menuItemId);
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Failed to add item to cart');
     }
   };
 
