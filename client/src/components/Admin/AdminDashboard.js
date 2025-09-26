@@ -93,6 +93,13 @@ function AdminDashboard({ userId, isAdmin }) {
 
   const handleMenuSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!menuForm.name || !menuForm.description || !menuForm.price || !menuForm.category_id) {
+      alert('Please fill in all required fields');
+      return;
+    }
+    
     try {
       const url = editingItem 
         ? `${API_BASE_URL}/api/menu/${editingItem.id}`
@@ -100,15 +107,18 @@ function AdminDashboard({ userId, isAdmin }) {
       const method = editingItem ? 'PUT' : 'POST';
       
       const payload = {
-        name: menuForm.name,
-        description: menuForm.description,
+        name: menuForm.name.trim(),
+        description: menuForm.description.trim(),
         price: parseFloat(menuForm.price),
-        category_id: parseInt(menuForm.category_id),
-        image_url: menuForm.image_url || null
+        category_id: parseInt(menuForm.category_id)
       };
       
-      console.log('Submitting menu item:', payload);
-      console.log('URL:', url, 'Method:', method);
+      // Only add image_url if it's provided
+      if (menuForm.image_url && menuForm.image_url.trim()) {
+        payload.image_url = menuForm.image_url.trim();
+      }
+      
+      console.log('Creating menu item:', payload);
       
       const response = await fetch(url, {
         method,
@@ -116,25 +126,27 @@ function AdminDashboard({ userId, isAdmin }) {
         body: JSON.stringify(payload)
       });
       
-      if (!response.ok) {
-        const errorData = await response.text();
-        console.error('Server error:', response.status, errorData);
-        alert(`Error: ${response.status} - ${errorData}`);
-        return;
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Menu item created:', result);
+        
+        // Reset form and close
+        setShowMenuForm(false);
+        setEditingItem(null);
+        setMenuForm({ name: '', description: '', price: '', category_id: '', image_url: '' });
+        
+        // Reload menu items
+        await loadMenuItems();
+        
+        alert(editingItem ? 'Menu item updated!' : 'New menu item created!');
+      } else {
+        const errorText = await response.text();
+        console.error('Server error:', response.status, errorText);
+        alert(`Failed to save: ${response.status} - ${errorText}`);
       }
-      
-      const result = await response.json();
-      console.log('Success:', result);
-      
-      setShowMenuForm(false);
-      setEditingItem(null);
-      setMenuForm({ name: '', description: '', price: '', category_id: '', image_url: '' });
-      loadMenuItems();
-      
-      alert(editingItem ? 'Menu item updated successfully!' : 'Menu item created successfully!');
     } catch (error) {
-      console.error('Error saving menu item:', error);
-      alert('Failed to save menu item. Check console for details.');
+      console.error('Error:', error);
+      alert('Network error. Check console.');
     }
   };
 
