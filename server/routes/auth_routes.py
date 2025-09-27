@@ -57,9 +57,6 @@ def register():
         'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
     }, 'your-secret-key-change-in-production', algorithm='HS256')
     
-    db.session.add(user)
-    db.session.commit()
-    
     return jsonify({
         'message': 'Registration successful',
         'user': user.to_dict(),

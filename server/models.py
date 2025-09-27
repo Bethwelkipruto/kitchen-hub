@@ -17,14 +17,10 @@ class User(db.Model):
     orders = db.relationship('Order', backref='user', lazy=True)
     
     def set_password(self, password):
-        self.password_hash = password
+        self.password_hash = generate_password_hash(password)
     
     def check_password(self, password):
-        if self.username == 'admin' and password == 'admin123':
-            return True
-        if self.username == 'john_doe' and password == 'password123':
-            return True
-        return self.password_hash == password
+        return check_password_hash(self.password_hash, password)
     
     def to_dict(self):
         return {

@@ -47,7 +47,7 @@ if __name__ == '__main__':
             User(username='customer1', email='customer@example.com', is_admin=False)
         ]
         
-        # Set passwords
+        # Set passwords (now properly hashed)
         users[0].set_password('password123')
         users[1].set_password('password123')
         users[2].set_password('password123')
