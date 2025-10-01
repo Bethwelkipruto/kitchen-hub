@@ -9,6 +9,7 @@ function Register() {
     confirmPassword: ''
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
 
@@ -30,8 +31,10 @@ function Register() {
     const result = await register(formData.username, formData.email, formData.password);
     
     if (result.success) {
-      alert('Account created successfully! Welcome to Kitchen Hub!');
-      window.location.href = '/menu';
+      setSuccess('Account created successfully! Welcome to Kitchen Hub!');
+      setTimeout(() => {
+        window.location.href = '/menu';
+      }, 2000);
     } else {
       setError(result.error);
     }
@@ -69,6 +72,19 @@ function Register() {
           border: '1px solid #ef5350'
         }}>
           {error}
+        </div>
+      )}
+      
+      {success && (
+        <div style={{ 
+          backgroundColor: '#e8f5e9', 
+          color: '#2e7d32', 
+          padding: '1rem', 
+          borderRadius: '5px', 
+          marginBottom: '1rem',
+          border: '1px solid #4caf50'
+        }}>
+          {success}
         </div>
       )}
 

@@ -24,8 +24,12 @@ app.register_blueprint(auth_bp)
 # ------------------------
 # CORS setup
 # ------------------------
-# ...existing code...
 CORS(app, supports_credentials=True, origins=[
    os.environ.get("FRONTEND_URL", "http://localhost:3000")
 ])
-# ...existing code...
+
+if __name__ == '__main__':
+    import os
+    port = int(os.environ.get('PORT', 5001))
+    debug = os.environ.get('FLASK_ENV') != 'production'
+    app.run(debug=debug, host='0.0.0.0', port=port)

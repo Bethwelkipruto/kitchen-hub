@@ -16,6 +16,12 @@ function AdminDashboard({ userId, isAdmin }) {
   const [categoryForm, setCategoryForm] = useState({ name: '', description: '' });
   const [editingCategory, setEditingCategory] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [notification, setNotification] = useState({ message: '', type: '', show: false });
+
+  const showNotification = (message, type = 'success') => {
+    setNotification({ message, type, show: true });
+    setTimeout(() => setNotification({ message: '', type: '', show: false }), 3000);
+  };
 
   useEffect(() => {
     if (isAdmin) {
@@ -111,7 +117,7 @@ function AdminDashboard({ userId, isAdmin }) {
     
     // Validate required fields
     if (!menuForm.name || !menuForm.description || !menuForm.price || !menuForm.category_id) {
-      alert('Please fill in all required fields');
+      showNotification('Please fill in all required fields', 'error');
       return;
     }
     
@@ -150,15 +156,15 @@ function AdminDashboard({ userId, isAdmin }) {
         // Reload menu items to show changes
         await loadMenuItems();
         
-        alert(editingItem ? '✅ Menu item updated successfully!' : '✅ New menu item created!');
+        showNotification(editingItem ? 'Menu item updated successfully!' : 'New menu item created!');
       } else {
         const errorText = await response.text();
         console.error('Server error:', response.status, errorText);
-        alert(`❌ Failed to save: ${response.status} - ${errorText}`);
+        showNotification(`Failed to save: ${response.status} - ${errorText}`, 'error');
       }
     } catch (error) {
       console.error('Network error:', error);
-      alert('❌ Network error. Check console and server.');
+      showNotification('Network error. Please check your connection.', 'error');
     }
   };
 
@@ -235,13 +241,13 @@ function AdminDashboard({ userId, isAdmin }) {
         setCategoryForm({ name: '', description: '' });
         setEditingCategory(null);
         loadCategories();
-        alert(editingCategory ? 'Category updated successfully!' : 'Category created successfully!');
+        showNotification(editingCategory ? 'Category updated successfully!' : 'Category created successfully!');
       } else {
-        alert(editingCategory ? 'Failed to update category' : 'Failed to create category');
+        showNotification(editingCategory ? 'Failed to update category' : 'Failed to create category', 'error');
       }
     } catch (error) {
       console.error('Error saving category:', error);
-      alert('Error saving category');
+      showNotification('Error saving category', 'error');
     }
   };
 
@@ -266,13 +272,13 @@ function AdminDashboard({ userId, isAdmin }) {
       
       if (response.ok) {
         loadCategories();
-        alert('Category deleted successfully!');
+        showNotification('Category deleted successfully!');
       } else {
-        alert('Failed to delete category');
+        showNotification('Failed to delete category', 'error');
       }
     } catch (error) {
       console.error('Error deleting category:', error);
-      alert('Error deleting category');
+      showNotification('Error deleting category', 'error');
     }
   };
 
@@ -293,6 +299,23 @@ function AdminDashboard({ userId, isAdmin }) {
 
   return (
     <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+      {notification.show && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          padding: '1rem 1.5rem',
+          borderRadius: '8px',
+          color: 'white',
+          fontWeight: 'bold',
+          zIndex: 1000,
+          backgroundColor: notification.type === 'error' ? '#f44336' : notification.type === 'info' ? '#2196f3' : '#4caf50',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+        }}>
+          {notification.message}
+        </div>
+      )}
+      
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h1 style={{ color: '#2e7d32', margin: 0 }}>Kitchen Hub Admin Panel</h1>
         <button 
@@ -300,7 +323,7 @@ function AdminDashboard({ userId, isAdmin }) {
             loadDashboard();
             loadOrders();
             loadUsers();
-            alert('Data refreshed!');
+            showNotification('Data refreshed successfully!');
           }}
           style={{
             padding: '0.75rem 1.5rem',
@@ -608,7 +631,7 @@ function AdminDashboard({ userId, isAdmin }) {
                       console.log('Test button clicked');
                       console.log('Form data:', menuForm);
                       console.log('Categories:', categories);
-                      alert('Test button works! Check console for form data.');
+                      showNotification('Test completed! Check console for details.', 'info');
                     }}
                     style={{
                       padding: '0.75rem 1rem',

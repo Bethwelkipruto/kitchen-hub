@@ -71,7 +71,6 @@ function MenuList({ onAddToCart, userId, isAuthenticated }) {
 
   const handleAddToCart = async (menuItemId) => {
     if (!isAuthenticated) {
-      alert('Please login to add items to cart');
       return;
     }
     
@@ -81,7 +80,6 @@ function MenuList({ onAddToCart, userId, isAuthenticated }) {
         menu_item_id: menuItemId,
         quantity: 1
       });
-      alert('Item added to cart!');
       
       // Trigger cart count refresh in navbar
       window.dispatchEvent(new CustomEvent('cartUpdated'));
@@ -91,7 +89,6 @@ function MenuList({ onAddToCart, userId, isAuthenticated }) {
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
-      alert('Failed to add item to cart');
     }
   };
 

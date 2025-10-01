@@ -6,16 +6,17 @@ name = "pypi"
 [packages]
 ipdb = "==0.13.13"
 flask = "*"
-flask-sqlalchemy = "3.0.3"
-Werkzeug = "2.2.2"
+flask-sqlalchemy = ">=3.1.0"
+sqlalchemy = ">=2.0.0"
+Werkzeug = ">=2.3.0"
 flask-migrate = "*"
 sqlalchemy-serializer = "*"
 flask-restful = "*"
 flask-cors = "*"
 faker = "*"
-flask-jwt-extended = "*"
+pyjwt = "*"
 
 [requires]
-python_version = "3.11"
+python_version = "3.13"
 
 [dev-packages]
